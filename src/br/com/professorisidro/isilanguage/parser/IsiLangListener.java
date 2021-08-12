@@ -1,5 +1,5 @@
-// Generated from IsiLang.g4 by ANTLR 4.7.1
-package br.com.professorisidro.isilanguage.parser;
+// Generated from IsiLang.g4 by ANTLR 4.9.2
+package br.com.professorisidro.isilanguage;
 
 	import br.com.professorisidro.isilanguage.datastructures.IsiSymbol;
 	import br.com.professorisidro.isilanguage.datastructures.IsiVariable;
