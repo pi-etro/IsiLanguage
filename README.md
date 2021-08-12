@@ -29,6 +29,8 @@ Compilador da IsiLanguage, projeto da disciplina de Compiladores da UFABC.
 
 ## Utilização
 
+Para compilar a gramática:
+
 ```
 java -cp .:antlr-4.9.2-complete.jar org.antlr.v4.Tool IsiLang.g4 -package br.com.professorisidro.isilanguage -o ./src/br/com/professorisidro/isilanguage/parser/
 ```
