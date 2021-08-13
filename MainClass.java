@@ -2,10 +2,20 @@ import java.util.Scanner;
 public class MainClass{ 
   public static void main(String args[]){
        Scanner _key = new Scanner(System.in);
+boolean  bool3;
 double  a;
+boolean  bool2;
 double  b;
 double  i;
 String  t1;
+boolean  bool1;
+bool1 = false;
+System.out.println(bool1);
+bool2 = true;
+bool3 = false;
+while (bool1&&bool2||bool3){
+System.out.println("Nevermore");
+}
 t1 = "caracteres";
 System.out.println(t1);
 a= _key.nextDouble();

@@ -2,6 +2,16 @@ programa
 
   numero a, b, i;
   texto  t1;
+  booleano bool1, bool2, bool3;
+  
+  bool1 = Falso;
+  escreva(bool1);
+  bool2 = Verdadeiro;
+  bool3 = Falso;
+  
+  enquanto(bool1 && bool2 || bool3){
+  	 escreva("Nevermore");
+  }
   
   t1 = "caracteres";
   escreva(t1);

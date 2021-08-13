@@ -51,6 +51,12 @@ grammar IsiLang;
 	public void generateCode(){
 		program.generateTarget();
 	}
+	
+	public String IsiBool2Java(String s){
+        if(s.equals("Verdadeiro")) return "true";
+        return "false";
+    }
+	
 }
 
 prog	: 'programa' decl bloco fimprog
@@ -102,6 +108,7 @@ declaravar :  tipo ID  {
            
 tipo       : 'numero' { _tipo = IsiVariable.NUMBER;  }
            | 'texto'  { _tipo = IsiVariable.TEXT;  }
+           | 'booleano'  { _tipo = IsiVariable.BOOLEAN;  }
            ;
         
 bloco	: { curThread = new ArrayList<AbstractCommand>(); 
@@ -216,28 +223,65 @@ cmdselecao  :  'se' (AP
                    }
             ;
             
-cmdrepet1 : 'enquanto' AP
-					   ID    
-					   { 
-					   	verificaID(_input.LT(-1).getText());
-					   	_exprDecision = _input.LT(-1).getText();
-					   	if(stackUsedVariables.contains(_exprDecision))
-					   		stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
-					   }
-					   OPREL { _exprDecision += _input.LT(-1).getText(); }
+cmdrepet1 : 'enquanto' AP { _exprDecision = ""; }
+					   
 					   (
-					   	ID
-					   	{
-					   		verificaID(_input.LT(-1).getText());
-					   		_exprDecision += _input.LT(-1).getText();
-					   		if(stackUsedVariables.contains(_exprDecision))
-					   			stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
-					   	}
-					   	| NUMBER
-					   	{
-					   		_exprDecision += _input.LT(-1).getText();
-					   	}
-					   ) 
+					   	(
+					   		(OPNOT { _exprDecision += "!"; })?
+					   		(
+					   			BOOLEAN { _exprDecision += IsiBool2Java(_input.LT(-1).getText()); }
+					   			|
+					   			ID
+					   			{ 
+								   	verificaID(_input.LT(-1).getText());
+								   	_exprDecision = _input.LT(-1).getText();
+								   	if(stackUsedVariables.contains(_exprDecision))
+								   		stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+								}
+								
+								(
+									OPLOG { _exprDecision += _input.LT(-1).getText();}
+									ID
+								   	{
+								   		verificaID(_input.LT(-1).getText());
+								   		_exprDecision += _input.LT(-1).getText();
+								   		String aux = _input.LT(-1).getText();
+								   		if(stackUsedVariables.contains(aux))
+								   			stackUsedVariables.remove(stackUsedVariables.indexOf(aux));
+								   	}
+								)*
+								
+					   		)
+                        )
+                       |
+						(  ID    
+						   { 
+						   	verificaID(_input.LT(-1).getText());
+						   	_exprDecision = _input.LT(-1).getText();
+						   	if(stackUsedVariables.contains(_exprDecision))
+						   		stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+						   }
+						   
+						   
+						   OPREL { _exprDecision += _input.LT(-1).getText(); }
+						   
+						   
+						   (
+						   	ID
+						   	{
+						   		verificaID(_input.LT(-1).getText());
+						   		_exprDecision += _input.LT(-1).getText();
+						   		if(stackUsedVariables.contains(_exprDecision))
+						   			stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+						   	}
+						   	| NUMBER
+						   	{
+						   		_exprDecision += _input.LT(-1).getText();
+						   	}
+						   )
+					    )
+					   )
+					    
 					   FP
 					   ACH 
 	                   { curThread = new ArrayList<AbstractCommand>(); 
@@ -360,6 +404,11 @@ termo		: ID { verificaID(_input.LT(-1).getText());
               {
               	_exprContent += _input.LT(-1).getText();
               }
+            | 
+              BOOLEAN
+              {
+                  _exprContent += IsiBool2Java(_input.LT(-1).getText());
+              } 
 			;
 		
 termo2		: ID { verificaID(_input.LT(-1).getText());
@@ -414,5 +463,14 @@ NUMBER	: [0-9]+ ('.' [0-9]+)?
 		
 STRING	:ASP ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | WS)+ ASP
 		;
+		
+BOOLEAN    : 'Verdadeiro' | 'Falso'
+        ;
+        
+OPNOT : '!'
+      ;
+
+OPLOG : '&&' | '||'
+      ;
 		
 WS	: (' ' | '\t' | '\n' | '\r') -> skip;
