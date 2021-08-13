@@ -1,5 +1,5 @@
 // Generated from IsiLang.g4 by ANTLR 4.9.2
-package br.com.professorisidro.isilanguage;
+package br.com.professorisidro.isilanguage.parser;
 
 	import br.com.professorisidro.isilanguage.datastructures.IsiSymbol;
 	import br.com.professorisidro.isilanguage.datastructures.IsiVariable;
@@ -11,6 +11,8 @@ package br.com.professorisidro.isilanguage;
 	import br.com.professorisidro.isilanguage.ast.CommandEscrita;
 	import br.com.professorisidro.isilanguage.ast.CommandAtribuicao;
 	import br.com.professorisidro.isilanguage.ast.CommandDecisao;
+	import br.com.professorisidro.isilanguage.ast.CommandRepeticao1;
+	import br.com.professorisidro.isilanguage.ast.CommandRepeticao2;
 	import java.util.ArrayList;
 	import java.util.Stack;
 
@@ -31,6 +33,16 @@ public interface IsiLangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitProg(IsiLangParser.ProgContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IsiLangParser#fimprog}.
+	 * @param ctx the parse tree
+	 */
+	void enterFimprog(IsiLangParser.FimprogContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsiLangParser#fimprog}.
+	 * @param ctx the parse tree
+	 */
+	void exitFimprog(IsiLangParser.FimprogContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link IsiLangParser#decl}.
 	 * @param ctx the parse tree
@@ -122,6 +134,26 @@ public interface IsiLangListener extends ParseTreeListener {
 	 */
 	void exitCmdselecao(IsiLangParser.CmdselecaoContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link IsiLangParser#cmdrepet1}.
+	 * @param ctx the parse tree
+	 */
+	void enterCmdrepet1(IsiLangParser.Cmdrepet1Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsiLangParser#cmdrepet1}.
+	 * @param ctx the parse tree
+	 */
+	void exitCmdrepet1(IsiLangParser.Cmdrepet1Context ctx);
+	/**
+	 * Enter a parse tree produced by {@link IsiLangParser#cmdrepet2}.
+	 * @param ctx the parse tree
+	 */
+	void enterCmdrepet2(IsiLangParser.Cmdrepet2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsiLangParser#cmdrepet2}.
+	 * @param ctx the parse tree
+	 */
+	void exitCmdrepet2(IsiLangParser.Cmdrepet2Context ctx);
+	/**
 	 * Enter a parse tree produced by {@link IsiLangParser#expr}.
 	 * @param ctx the parse tree
 	 */
@@ -132,6 +164,16 @@ public interface IsiLangListener extends ParseTreeListener {
 	 */
 	void exitExpr(IsiLangParser.ExprContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link IsiLangParser#expr2}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr2(IsiLangParser.Expr2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsiLangParser#expr2}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr2(IsiLangParser.Expr2Context ctx);
+	/**
 	 * Enter a parse tree produced by {@link IsiLangParser#termo}.
 	 * @param ctx the parse tree
 	 */
@@ -141,4 +183,14 @@ public interface IsiLangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTermo(IsiLangParser.TermoContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link IsiLangParser#termo2}.
+	 * @param ctx the parse tree
+	 */
+	void enterTermo2(IsiLangParser.Termo2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link IsiLangParser#termo2}.
+	 * @param ctx the parse tree
+	 */
+	void exitTermo2(IsiLangParser.Termo2Context ctx);
 }

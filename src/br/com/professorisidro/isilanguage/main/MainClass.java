@@ -39,6 +39,7 @@ public class MainClass {
 		}
 		catch(IsiSemanticException ex) {
 			System.err.println("Semantic error - "+ex.getMessage());
+			ex.printStackTrace();
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();

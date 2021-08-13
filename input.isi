@@ -1,9 +1,9 @@
 programa
 
-  numero a, b;
+  numero a, b, i;
   texto  t1;
 
-  leia(a);
+  leia(a); 
   leia(b);
   
   a = 1 + 2 * 3 / b;
@@ -16,6 +16,22 @@ programa
      escreva (b);
   }
   
+  i=1;
   
+  enquanto ( i < 2 ) {
+  	 i = i + 1;
+  }
+  
+  
+  se ( i < 2){
+  	 escreva(i);
+  }
+  senao {
+  	 escreva(i);
+  }
+  
+  para (i=3;i<5;i=i+1){
+  	 escreva(i);
+  }
 
 fimprog;

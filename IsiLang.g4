@@ -11,6 +11,8 @@ grammar IsiLang;
 	import br.com.professorisidro.isilanguage.ast.CommandEscrita;
 	import br.com.professorisidro.isilanguage.ast.CommandAtribuicao;
 	import br.com.professorisidro.isilanguage.ast.CommandDecisao;
+	import br.com.professorisidro.isilanguage.ast.CommandRepeticao1;
+	import br.com.professorisidro.isilanguage.ast.CommandRepeticao2;
 	import java.util.ArrayList;
 	import java.util.Stack;
 }
@@ -31,6 +33,7 @@ grammar IsiLang;
 	private String _exprDecision;
 	private ArrayList<AbstractCommand> listaTrue;
 	private ArrayList<AbstractCommand> listaFalse;
+	private ArrayList<String> stackUsedVariables = new ArrayList<String>();
 	
 	public void verificaID(String id){
 		if (!symbolTable.exists(id)){
@@ -49,12 +52,19 @@ grammar IsiLang;
 	}
 }
 
-prog	: 'programa' decl bloco  'fimprog;'
+prog	: 'programa' decl bloco fimprog
            {  program.setVarTable(symbolTable);
            	  program.setComandos(stack.pop());
            	 
            } 
 		;
+		
+fimprog : 'fimprog;' {		
+		if(!stackUsedVariables.isEmpty())
+			throw new IsiSemanticException("Variable "+stackUsedVariables.get(0)+" not used");
+	}
+;
+
 		
 decl    :  (declaravar)+
         ;
@@ -64,6 +74,7 @@ declaravar :  tipo ID  {
 	                  _varName = _input.LT(-1).getText();
 	                  _varValue = null;
 	                  symbol = new IsiVariable(_varName, _tipo, _varValue);
+	                  stackUsedVariables.add(_varName);
 	                  if (!symbolTable.exists(_varName)){
 	                     symbolTable.add(symbol);	
 	                  }
@@ -75,6 +86,7 @@ declaravar :  tipo ID  {
               	 ID {
 	                  _varName = _input.LT(-1).getText();
 	                  _varValue = null;
+	                  stackUsedVariables.add(_varName);
 	                  symbol = new IsiVariable(_varName, _tipo, _varValue);
 	                  if (!symbolTable.exists(_varName)){
 	                     symbolTable.add(symbol);	
@@ -101,7 +113,9 @@ bloco	: { curThread = new ArrayList<AbstractCommand>();
 cmd		:  cmdleitura  
  		|  cmdescrita 
  		|  cmdattrib
- 		|  cmdselecao  
+ 		|  cmdselecao
+ 		|  cmdrepet1
+ 		|  cmdrepet2
 		;
 		
 cmdleitura	: 'leia' AP
@@ -122,6 +136,8 @@ cmdescrita	: 'escreva'
                  AP 
                  ID { verificaID(_input.LT(-1).getText());
 	                  _writeID = _input.LT(-1).getText();
+	                  if(stackUsedVariables.contains(_writeID))
+	                  	stackUsedVariables.remove(stackUsedVariables.indexOf(_writeID));
                      } 
                  FP 
                  SC
@@ -145,9 +161,27 @@ cmdattrib	:  ID { verificaID(_input.LT(-1).getText());
 			
 			
 cmdselecao  :  'se' AP
-                    ID    { _exprDecision = _input.LT(-1).getText(); }
+                    ID    
+                    { 
+                    	verificaID(_input.LT(-1).getText());
+                    	_exprDecision = _input.LT(-1).getText();
+                    	if(stackUsedVariables.contains(_exprDecision))
+	                  		stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+                    }
                     OPREL { _exprDecision += _input.LT(-1).getText(); }
-                    (ID | NUMBER) {_exprDecision += _input.LT(-1).getText(); }
+                    (
+                    	ID
+                    	{
+                    		verificaID(_input.LT(-1).getText());
+                    		_exprDecision += _input.LT(-1).getText();
+                    		if(stackUsedVariables.contains(_exprDecision))
+	                  			stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+                    	}
+                    	| NUMBER
+                    	{
+                    		_exprDecision += _input.LT(-1).getText();
+                    	}
+                    ) 
                     FP 
                     ACH 
                     { curThread = new ArrayList<AbstractCommand>(); 
@@ -174,10 +208,113 @@ cmdselecao  :  'se' AP
                    	}
                    )?
             ;
+            
+cmdrepet1 : 'enquanto' AP
+					   ID    
+					   { 
+					   	verificaID(_input.LT(-1).getText());
+					   	_exprDecision = _input.LT(-1).getText();
+					   	if(stackUsedVariables.contains(_exprDecision))
+					   		stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+					   }
+					   OPREL { _exprDecision += _input.LT(-1).getText(); }
+					   (
+					   	ID
+					   	{
+					   		verificaID(_input.LT(-1).getText());
+					   		_exprDecision += _input.LT(-1).getText();
+					   		if(stackUsedVariables.contains(_exprDecision))
+					   			stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+					   	}
+					   	| NUMBER
+					   	{
+					   		_exprDecision += _input.LT(-1).getText();
+					   	}
+					   ) 
+					   FP
+					   ACH 
+	                   { curThread = new ArrayList<AbstractCommand>(); 
+	                     stack.push(curThread);
+	                   }
+	                   (cmd)+
+	                   FCH
+	                   {
+	                   	listaTrue = stack.pop();
+	                   	CommandRepeticao1 cmd = new CommandRepeticao1(_exprDecision, listaTrue);
+	                   	stack.peek().add(cmd);
+	                   }
+			;
+			
+cmdrepet2 : 'para' AP
+
+				   ID 
+				   {
+				   	_exprDecision = "";
+				   	verificaID(_input.LT(-1).getText());
+				    _exprDecision = _input.LT(-1).getText();
+				    if(stackUsedVariables.contains(_exprDecision))
+				    	stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+				   }
+				   ATTR { _exprDecision +="="; }
+	               expr2 {_exprDecision += ";";}
+				   SC
+
+
+				   ID
+				   {
+				   	verificaID(_input.LT(-1).getText());
+				   	_exprDecision += _input.LT(-1).getText();
+				   	if(stackUsedVariables.contains(_exprDecision))
+				    	stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+				   }
+				   OPREL { _exprDecision += _input.LT(-1).getText(); }
+				   (ID | NUMBER) 
+				   {
+				   	_exprDecision += _input.LT(-1).getText();
+				   	_exprDecision += ";";
+				   }
+				   SC
+
+
+				   ID 
+				   {
+				   	verificaID(_input.LT(-1).getText());
+				   	_exprID = _input.LT(-1).getText();
+				   	_exprDecision += _input.LT(-1).getText();
+				   	if(stackUsedVariables.contains(_exprDecision))
+				    	stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+				   }
+				   ATTR { _exprDecision +="=";}
+				   expr2
+				   
+				   FP
+				   
+				   ACH
+				   {
+				   	curThread = new ArrayList<AbstractCommand>(); 
+	                stack.push(curThread);
+	               }
+	               (cmd)+
+	               FCH
+                   {
+                   	listaTrue = stack.pop();
+                   	CommandRepeticao2 cmd2 = new CommandRepeticao2(_exprDecision, listaTrue);
+                   	stack.peek().add(cmd2);
+                   }
+			;
 			
 expr		:  termo ( 
 	             OP  { _exprContent += _input.LT(-1).getText();}
 	            termo
+	            )*
+			;
+			
+expr2		:  termo2 ( 
+	             OP
+	             { 
+	             	_exprDecision += _input.LT(-1).getText();	
+	             }
+	            termo2
 	            )*
 			;
 			
@@ -190,7 +327,16 @@ termo		: ID { verificaID(_input.LT(-1).getText());
               	_exprContent += _input.LT(-1).getText();
               }
 			;
-			
+		
+termo2		: ID { verificaID(_input.LT(-1).getText());
+	               _exprDecision += _input.LT(-1).getText();
+                 } 
+            | 
+              NUMBER
+              {
+              	_exprDecision += _input.LT(-1).getText();
+              }
+			;			
 	
 AP	: '('
 	;
