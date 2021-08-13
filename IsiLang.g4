@@ -164,7 +164,7 @@ cmdattrib	:  ID { verificaID(_input.LT(-1).getText());
                }
 			;
 					
-cmdselecao  :  'se' AP
+cmdselecao  :  'se' (AP
                     ID    
                     { 
                     	verificaID(_input.LT(-1).getText());
@@ -195,7 +195,8 @@ cmdselecao  :  'se' AP
                     
                     FCH 
                     {
-                       listaTrue = stack.pop();	
+                       listaTrue = stack.pop();
+                       listaFalse = new ArrayList<AbstractCommand>();
                     } 
                    ('senao' 
                    	 ACH
@@ -205,12 +206,14 @@ cmdselecao  :  'se' AP
                    	 } 
                    	(cmd+) 
                    	FCH
-                   	{
-                   		listaFalse = stack.pop();
-                   		CommandDecisao cmd = new CommandDecisao(_exprDecision, listaTrue, listaFalse);
-                   		stack.peek().add(cmd);
-                   	}
+                   	{listaFalse = stack.pop();}
+
                    )?
+                   )
+                   {
+	               		CommandDecisao cmd = new CommandDecisao(_exprDecision, listaTrue, listaFalse);
+	               		stack.peek().add(cmd);
+                   }
             ;
             
 cmdrepet1 : 'enquanto' AP
@@ -322,6 +325,8 @@ cmdswitch	: 'switch'	AP
 					   		'case'
 					   		COLON
 					   		NUMBER
+					   		'break'
+					   		SC
 					   	)+ 
 					   	{
 					   		ncases += 1;

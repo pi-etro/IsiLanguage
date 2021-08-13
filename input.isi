@@ -36,6 +36,10 @@ programa
   	 escreva(i);
   }
   
+  se ( i==2 ){
+  	 escreva("Dois");
+  }
+  
   escreva("fim");
 
 fimprog;
