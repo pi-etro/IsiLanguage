@@ -151,15 +151,14 @@ cmdattrib	:  ID { verificaID(_input.LT(-1).getText());
                     _exprID = _input.LT(-1).getText();
                    } 
                ATTR { _exprContent = ""; } 
-               expr 
+               (expr | STRING {_exprContent += _input.LT(-1).getText() ;}) 
                SC
                {
                	 CommandAtribuicao cmd = new CommandAtribuicao(_exprID, _exprContent);
                	 stack.peek().add(cmd);
                }
 			;
-			
-			
+					
 cmdselecao  :  'se' AP
                     ID    
                     { 
@@ -337,7 +336,10 @@ termo2		: ID { verificaID(_input.LT(-1).getText());
               	_exprDecision += _input.LT(-1).getText();
               }
 			;			
-	
+
+ASP : '"'
+	;
+
 AP	: '('
 	;
 	
@@ -370,6 +372,9 @@ ID	: [a-z] ([a-z] | [A-Z] | [0-9])*
 	;
 	
 NUMBER	: [0-9]+ ('.' [0-9]+)?
+		;
+		
+STRING	:ASP ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | WS)+ ASP
 		;
 		
 WS	: (' ' | '\t' | '\n' | '\r') -> skip;

@@ -2,6 +2,9 @@ programa
 
   numero a, b, i;
   texto  t1;
+  
+  t1 = "caracteres";
+  escreva(t1);
 
   leia(a); 
   leia(b);
