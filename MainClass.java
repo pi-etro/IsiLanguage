@@ -26,4 +26,5 @@ System.out.println(i);}
 for (i=3;i<5;i=i+1){
 System.out.println(i);
 }
+System.out.println("fim");
   }}

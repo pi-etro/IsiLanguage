@@ -19,6 +19,7 @@ grammar IsiLang;
 
 @members{
 	private int _tipo;
+	private int ncases;
 	private String _varName;
 	private String _varValue;
 	private IsiSymbolTable symbolTable = new IsiSymbolTable();
@@ -134,11 +135,15 @@ cmdleitura	: 'leia' AP
 			
 cmdescrita	: 'escreva' 
                  AP 
-                 ID { verificaID(_input.LT(-1).getText());
+                 (
+                 	ID { verificaID(_input.LT(-1).getText());
 	                  _writeID = _input.LT(-1).getText();
 	                  if(stackUsedVariables.contains(_writeID))
 	                  	stackUsedVariables.remove(stackUsedVariables.indexOf(_writeID));
-                     } 
+                     }
+                    | STRING {_writeID = _input.LT(-1).getText() ;}
+                  
+                 ) 
                  FP 
                  SC
                {
@@ -302,6 +307,31 @@ cmdrepet2 : 'para' AP
                    }
 			;
 			
+cmdswitch	: 'switch'	AP
+						ID 
+					   	{
+					   		_exprDecision = "";
+						   	verificaID(_input.LT(-1).getText());
+						    _exprDecision = _input.LT(-1).getText();
+						    if(stackUsedVariables.contains(_exprDecision))
+						    	stackUsedVariables.remove(stackUsedVariables.indexOf(_exprDecision));
+					   	}
+					   	FP
+					   	ACH
+					   	(
+					   		'case'
+					   		COLON
+					   		NUMBER
+					   	)+ 
+					   	{
+					   		ncases += 1;
+					   	}
+					   	(
+					   		'default'
+					   	)?
+					   	FCH
+			;			
+			
 expr		:  termo ( 
 	             OP  { _exprContent += _input.LT(-1).getText();}
 	            termo
@@ -345,6 +375,9 @@ AP	: '('
 	
 FP	: ')'
 	;
+	
+COLON 	: ':'
+		;
 	
 SC	: ';'
 	;
