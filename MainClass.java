@@ -9,11 +9,14 @@ double  b;
 double  i;
 String  t1;
 boolean  bool1;
+//comentario1
 bool1 = false;
 System.out.println(bool1);
 bool2 = true;
 bool3 = false;
+//comentario2
 while (bool1&&bool2||bool3){
+//comentario3
 System.out.println("Nevermore");
 }
 t1 = "caracteres";

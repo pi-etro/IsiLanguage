@@ -13,6 +13,8 @@ package br.com.professorisidro.isilanguage.parser;
 	import br.com.professorisidro.isilanguage.ast.CommandDecisao;
 	import br.com.professorisidro.isilanguage.ast.CommandRepeticao1;
 	import br.com.professorisidro.isilanguage.ast.CommandRepeticao2;
+	import br.com.professorisidro.isilanguage.ast.CommandComentario;
+	import br.com.professorisidro.isilanguage.ast.CommandSwitch;
 	import java.util.ArrayList;
 	import java.util.Stack;
 
@@ -183,6 +185,18 @@ public class IsiLangBaseListener implements IsiLangListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCmdrepet2(IsiLangParser.Cmdrepet2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCmdcomment(IsiLangParser.CmdcommentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCmdcomment(IsiLangParser.CmdcommentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

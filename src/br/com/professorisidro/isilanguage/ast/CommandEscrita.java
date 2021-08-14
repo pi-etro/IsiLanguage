@@ -17,5 +17,4 @@ public class CommandEscrita extends AbstractCommand {
 		return "CommandEscrita [id=" + id + "]";
 	}
 	
-
 }

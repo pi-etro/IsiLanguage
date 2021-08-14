@@ -13,6 +13,8 @@ grammar IsiLang;
 	import br.com.professorisidro.isilanguage.ast.CommandDecisao;
 	import br.com.professorisidro.isilanguage.ast.CommandRepeticao1;
 	import br.com.professorisidro.isilanguage.ast.CommandRepeticao2;
+	import br.com.professorisidro.isilanguage.ast.CommandComentario;
+	import br.com.professorisidro.isilanguage.ast.CommandSwitch;
 	import java.util.ArrayList;
 	import java.util.Stack;
 }
@@ -124,6 +126,7 @@ cmd		:  cmdleitura
  		|  cmdselecao
  		|  cmdrepet1
  		|  cmdrepet2
+ 		|  cmdcomment
 		;
 		
 cmdleitura	: 'leia' AP
@@ -354,10 +357,17 @@ cmdrepet2 : 'para' AP
                    }
 			;
 			
+cmdcomment	: 	CMT
+				{
+					String comment = _input.LT(-1).getText();
+					CommandComentario cmd = new CommandComentario(comment);
+					stack.peek().add(cmd);
+				}
+			;
+			
 cmdswitch	: 'switch'	AP
 						ID 
 					   	{
-					   		_exprDecision = "";
 						   	verificaID(_input.LT(-1).getText());
 						    _exprDecision = _input.LT(-1).getText();
 						    if(stackUsedVariables.contains(_exprDecision))
@@ -420,7 +430,7 @@ termo2		: ID { verificaID(_input.LT(-1).getText());
               	_exprDecision += _input.LT(-1).getText();
               }
 			;			
-
+	
 ASP : '"'
 	;
 
@@ -461,10 +471,16 @@ ID	: [a-z] ([a-z] | [A-Z] | [0-9])*
 NUMBER	: [0-9]+ ('.' [0-9]+)?
 		;
 		
-STRING	:ASP ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | WS)+ ASP
+STRING	: ASP ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | WS)+ ASP
 		;
 		
-BOOLEAN    : 'Verdadeiro' | 'Falso'
+CMT	: DFS ([a-z] | [A-Z] | [0-9])*
+	;
+
+DFS : '//'
+	;
+		
+BOOLEAN : 'Verdadeiro' | 'Falso'
         ;
         
 OPNOT : '!'

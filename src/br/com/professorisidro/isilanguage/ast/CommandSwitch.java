@@ -19,5 +19,10 @@ public class CommandSwitch extends AbstractCommand{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String toString() {
+		return "CommandSwitch [id=" + "" + "]";
+	}
 
 }
